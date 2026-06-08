@@ -1,0 +1,12 @@
+# Conexión a PostgreSQL
+spring.datasource.url=jdbc:postgresql://localhost:5432/salestracker
+spring.datasource.username=postgres
+spring.datasource.password=TU_CONTRASEÑA
+
+# Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=true
+
+# Mensajes de error
+server.error.include-message=always
