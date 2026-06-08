@@ -41,4 +41,27 @@ public class VentaController {
         return ventaService.calcularKpis(vendedorId);
     }
 
+    // GET /api/ventas/ranking — devuelve el ranking de todos los vendedores
+    @GetMapping("/ranking")
+    public List<VendedorKpiDTO> obtenerRanking() {
+        return ventaService.obtenerRanking();
+    }
+
+    // GET /api/ventas/hoy — ventas de hoy
+    @GetMapping("/hoy")
+    public List<Venta> obtenerVentasHoy() {
+        return ventaService.obtenerVentasHoy();
+    }
+
+    // GET /api/ventas/semana — ventas de esta semana
+    @GetMapping("/semana")
+    public List<Venta> obtenerVentasSemana() {
+        return ventaService.obtenerVentasSemana();
+    }
+
+    // GET /api/ventas/mes — ventas de este mes
+    @GetMapping("/mes")
+    public List<Venta> obtenerVentasMes() {
+        return ventaService.obtenerVentasMes();
+    }
 }

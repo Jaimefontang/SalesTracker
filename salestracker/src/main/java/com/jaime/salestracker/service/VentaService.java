@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.jaime.salestracker.dto.VendedorKpiDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,4 +68,53 @@ public class VentaService {
     }
 
     // Devuelve el raking de todos los vendedores ordenado por total facturado.
+    // Devuelve el ranking de todos los vendedores ordenado por total facturado
+    public List<VendedorKpiDTO> obtenerRanking() {
+
+        List<Vendedor> vendedores = vendedorRepository.findAll();
+
+        return vendedores.stream()
+                .map(vendedor -> {
+                    List<Venta> ventas = ventaRepository.findByVendedorId(vendedor.getId());
+
+                    Double totalFacturado = ventas.stream()
+                            .mapToDouble(Venta::getImporte)
+                            .sum();
+
+                    Integer numeroVentas = ventas.size();
+                    Double ticketMedio = numeroVentas > 0 ? totalFacturado / numeroVentas : 0.0;
+
+                    return new VendedorKpiDTO(vendedor.getId(), vendedor.getNombre(), totalFacturado, numeroVentas,
+                            ticketMedio);
+                })
+                // Ordena de mayor a menor por total facturado
+                .sorted((a, b) -> Double.compare(b.getTotalFacturado(), a.getTotalFacturado()))
+                .collect(java.util.stream.Collectors.toList());
+
+    }
+
+    // Ventas de hoy
+    public List<Venta> obtenerVentasHoy() {
+        LocalDateTime inicio = LocalDate.now().atStartOfDay();
+        LocalDateTime fin = LocalDate.now().atTime(23, 59, 59);
+        return ventaRepository.findByFechaHoraBetween(inicio, fin);
+    }
+
+    // Ventas de esta semana
+    public List<Venta> obtenerVentasSemana() {
+        LocalDateTime inicio = LocalDate.now()
+                .with(java.time.DayOfWeek.MONDAY)
+                .atStartOfDay();
+        LocalDateTime fin = LocalDateTime.now();
+        return ventaRepository.findByFechaHoraBetween(inicio, fin);
+    }
+
+    // Ventas de este mes
+    public List<Venta> obtenerVentasMes() {
+        LocalDateTime inicio = LocalDate.now()
+                .withDayOfMonth(1)
+                .atStartOfDay();
+        LocalDateTime fin = LocalDateTime.now();
+        return ventaRepository.findByFechaHoraBetween(inicio, fin);
+    }
 }
